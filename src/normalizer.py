@@ -9,20 +9,18 @@ from os import listdir
 from os import path
 
 m = Mystem()
-# ntlk.downlo
+nltk.download('russian')
 stopwords = set(stopwords.words('russian'))
 
 def prepare_text(text):
     prepared_text = text
-    prepared_text = prepared_text.replace("\n", " ")
+    prepared_text = re.sub(r'\s', ' ', prepared_text)
     prepared_text = re.sub(r'[^\w ]', '', prepared_text)
     prepared_text = prepared_text.lower()
-    prepared_text = " ".join(filter(lambda x: x not in stopwords, prepared_text.split(" ")))
+    prepared_text = " ".join(filter(lambda x: x not in stopwords and len(x) < 30, prepared_text.split(" ")))
     prepared_text = ''.join(m.lemmatize(prepared_text))
     prepared_text = prepared_text.strip()
     prepared_text = prepared_text[:8000]
-    
-    return prepared_text
 
 def prepare_tags(tags):
     prepared_tags = tags
