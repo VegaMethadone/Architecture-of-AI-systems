@@ -1,0 +1,16 @@
+{
+    "article_id": "726552",
+    "article_name": "Что нового в Rust 1.68",
+    "content": "упрощенный протокол проверка крейт cargos sparse protocol протокол sparse реестр cargo стабилизировать чтение индекс крейт также создавать база данные httpsindexcratesio тот крейт который опубликовывать основное хранилище  cratesio  прежний протокол git который попрежнему являться стандартный клонировать репозиторий который индексировать крейт доступный реестр начинать сталкиваться проблема масштабирование вызывать заметный задержка обновление репозиторий новый протокол должный значительно повышать производительность доступ  cratesio  загружать информация подмножество крейт который действительно использовать использование sparse протокол  cratesio  устанавливать переменный окружение cargo_registries_crates_io_protocolsparse отредактировать свой файл  cargoconfigtoml  добавлять registriescratesio protocol  sparse протокол  sparse  скоро становиться стандарт пакетный менеджер  cratesio  релиз 1700 позволять экономить место диск уменьшать размер индекс пакет мочь узнавать информация немой  блог rust  также документация  cargo book  локальный выражениеpin local pin construction новый макрос  pin  позволять создавать  pinmut t  выражение  t  захватить локальный состояние это называться закрепление стек стекать также захватить состояние  async fn  блок макрос похожий некоторый крейт такой  tokiopin  стандартный библиотека использовать элемент  pin  временный продление жизненный цикл  temporary lifetime extension  выразительный код макрос  runs a future to completion fn block_onf futurefuture f  foutput      let waker_that_unparks_thread  todo     let mut cx  contextfrom_wakerwaker_that_unparks_thread      pin the future so it can be polled     let mut pinned_future  pinfuture     loop          match pinned_futureas_mutpollmut cx              pollpending  threadpark             pollreadyresult  return result                пример оригинальный future  перемещать временный локальный переменный который ссылаться новый  pinned_future тип  pinmut f  этот временный локальный переменный pin проверять заимствование убеждаться просуществовать долго локальный переменная обработчик ошибка alloc default alloc error handler возникать ошибка выделение память rust api такой  boxnew   vecpush  иметь способ сигнализировать ошибка поэтому необходимо принимать какойто путь выполнение использование крейт  std  программа выводить сообщение  stderr  завершаться начинать rust 1680 бинарный файл включать  std  этот поведение сохраняться бинарный файл включать  alloc  быть вызываться ошибка  panic  сбой выделение память дополнительно настраивать помощь  panic_handler  это требоваться будущее вероятно поведение пакет  std  также изменяться соответствовать поведение использование пакет  alloc  весь это находить официальный блог  blogrustlangorg благодарить прочтение",
+    "tags": [
+        "rust",
+        "release",
+        "sparse",
+        "pin",
+        "alloc",
+        "borrow checker",
+        "code",
+        "programming",
+        "xocode"
+    ]
+}
