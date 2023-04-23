@@ -31,7 +31,7 @@ def prepare_tags(tags):
 
 
 
-articles_dir = "../parsed_articles/1000_articles_11_04_2023"
+articles_dir = "parsed_articles/1000_articles_11_04_2023"
 raw_articles_dir = path.join(articles_dir, "raw")
 normalized_articles_dir = path.join(articles_dir, "normalized")
 
