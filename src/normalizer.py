@@ -1,6 +1,7 @@
 from pymystem3 import Mystem
 import nltk
 from nltk.corpus import stopwords
+from tqdm import tqdm
 
 import re
 import json
@@ -21,6 +22,7 @@ def prepare_text(text):
     prepared_text = ''.join(m.lemmatize(prepared_text))
     prepared_text = prepared_text.strip()
     prepared_text = prepared_text[:8000]
+    return prepared_text
 
 def prepare_tags(tags):
     prepared_tags = tags
@@ -42,15 +44,13 @@ article_files = [f for f in listdir(raw_articles_dir) if path.isfile(path.join(r
 
 #articles = dict()
 
-for article_file in article_files:
+print(f"Processing raw data -> normalized ...")
+for article_file in tqdm(article_files):
     article_path = path.join(raw_articles_dir, article_file)
     # print(article_path)
-    print(f"Processing {article_path} ...")
     with open(article_path, 'r', encoding="UTF-8") as f:
         article = f.read()
         article_json = json.loads(article)
-        #articles[article_json["article_id"]] = article_json
-        # print(article_json)
         article_json['content'] = prepare_text(article_json['content'])
         article_json['tags'] = prepare_tags(article_json['tags'])
 
