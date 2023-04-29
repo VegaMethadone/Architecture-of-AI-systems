@@ -7,3 +7,4 @@ scikit-learn==1.2.0
 tqdm==4.64.1
 pymystem3==0.2.0
 Scrapy==2.8.0
+seaborn=0.12.2
