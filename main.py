@@ -27,7 +27,7 @@ if __name__ == '__main__':
   logging.debug(f'report_artifact_path {report_artifact_path}')
 
   logging.info('STAGE 1. Collecting articles')
-  # run_habrparser()
+  run_habrparser()
 
   logging.info('STAGE 2. Tokenizing articles content')
   run_tokenizer()

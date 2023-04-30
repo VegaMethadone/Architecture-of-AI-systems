@@ -39,3 +39,11 @@ def lable_text(text: list[str], model: Word2Vec, tag_collection: set[str], n=3, 
     # return lables
     return sorted(lables, key=lambda l: l[1], reverse=True)
 
+
+def lable_text_v2(text: list[str], model: Word2Vec, n=3):
+    text_words = list(filter(lambda x: x in model.wv, text))
+    text_vectors = list(map(lambda x: model.wv.get_vector(x, norm=True), text_words))
+    text_avg_sum_vector = sum(text_vectors) / len(text_vectors)
+    
+    lables = model.wv.most_similar(positive=text_avg_sum_vector, topn=n)
+    return lables

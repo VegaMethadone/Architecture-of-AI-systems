@@ -50,5 +50,6 @@ def save_tag_collection(tag_collection_path: str, tag_collection: set[str]):
             indent=4,
             ensure_ascii=False,
             )
+        f.write(result)
 
 

@@ -5,6 +5,7 @@ import gensim
 from ml_utils.articles_util import get_articles_json
 from ml_utils.articles_util import get_tag_collection
 from ml_utils.predictions import lable_text
+from ml_utils.predictions import lable_text_v2
 
 
 def gen_report(model_path: str, report_path: str):
@@ -22,6 +23,7 @@ def gen_report(model_path: str, report_path: str):
             article_content = article_json['content']
 
             tags = lable_text(article_content, model, tag_collection, 10)
+            # tags = lable_text_v2(article_content, model, tag_collection, 10)
 
             
             report.write(f'### {article_name}\n')
@@ -35,4 +37,4 @@ def gen_report(model_path: str, report_path: str):
 if __name__ == "__main__":
     model_path = sys.argv[1]
 
-    gen_report(model_path)
+    gen_report(model_path, 'report.md')
