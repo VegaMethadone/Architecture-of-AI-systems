@@ -1,27 +1,36 @@
 # Architecture-of-AI-systems
 
+# Рубрикатор
+
+### Содержание
+
+1. [Часть 1](docs/1.md)
+2. [Часть 2](docs/2.md)
+3. [Часть 3](docs/3.md)
+
+
+
+## Цель проекта
+
+Создание вероятностной (наивные Байесовский класификатор), логической (деревья принятия решения) и линейной (логистическая регрессия) модели машинного обучения,  которая будет на основе текста выдавать теги по теме, к которой относится сам текст - “Рубрикатор”. 
+
+## Выявить проблему
+
+В нынешнее время мы живем в информационном потоке, который дарит человечеству все больше новой информации.
+Исследование How Much Information, проведенное в 2009 году показало, что количество потребляемой в неделю информации с 1986 года выросло в 5 раз. С 250 тысяч слов в неделю до 1,25 миллиона! С тех пор эта цифра увеличилась в разы. Далее следуют ошеломительные показатели: в 2018 году количество интернет-пользователей и пользователей социальных сетей — 4.021 млрд и 3.196 млрд.
+
 
 
 ### Demo example
 
-run commands from project root
-
-
+(run commands from project root)
 
 to collect last 1000 articles:
 
 ```bash
-scrapy runspider src/scrapy_spiders/habrparser_common.py
+python -m venv venv  # create a virtual environment
+source venv/bin/activate 
+python -m pip install -r requirements.txt  # install project dependencies
+
+python main.py  # run pipeline (currently 5 stages)
 ```
-
-
-
-normalize them:
-
-```bash
-python src/normalizer.py
-```
-
-
-
-... model training etc ...
