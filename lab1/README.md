@@ -27,3 +27,13 @@
 
 ### Диаграмма активностей
 ![Activity diagram](image2.png)
+
+## Stage 3 ##
+
+## Stage 4 ##
+
+## Stage 5 ##
+
+## Stage 6 ##
+
+## Stage 7 ##
