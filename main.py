@@ -5,6 +5,7 @@ import logging
 from scrapy_spiders.habrparser import run_habrparser
 from tokenizer import run_tokenizer
 from ml_utils.w2v_trainer import run_training
+from ml_utils.articles_util import run_data_prefilter
 from ml_utils.articles_util import get_tag_collection
 from ml_utils.articles_util import save_tag_collection
 from ml_utils.reporter import gen_report
@@ -29,11 +30,14 @@ if __name__ == '__main__':
   logging.info('STAGE 1. Collecting articles')
   run_habrparser()
 
-  logging.info('STAGE 2. Tokenizing articles content')
-  run_tokenizer()
+  logging.info('STAGE 2. Prefilter data')
+  run_data_prefilter()
 
-  logging.info('STAGE 3. Train word2vec model')
-  run_training(model_artifact_path)
+  # logging.info('STAGE 2. Tokenizing articles content')
+  # run_normalizer()
+
+  # logging.info('STAGE 3. Train word2vec model')
+  # run_training(model_artifact_path)
 
   logging.info('STAGE 4. Prepare tag list')
   tag_collection = get_tag_collection()
