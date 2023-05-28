@@ -28,6 +28,7 @@ jobs:
           path: ~/train_data
 
       - name: Parse habre articles
+        if: ${{ true }} # TODO: add github variable
         run: python -m scrapy_spiders.habrparser
 
       # - name: Upload model
