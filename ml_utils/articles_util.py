@@ -7,8 +7,7 @@ import nltk
 from nltk.corpus import stopwords
 
 
-nltk.download('stopwords')
-
+# nltk.download('stopwords')
 
 # articles_dir_path = Path(environ['ARTICLES_PATH']) / 'tokenized'
 articles_dir_path = Path(environ['ARTICLES_PATH'])
@@ -91,6 +90,8 @@ def get_tag_identificator(tag: str) -> int:
 
 
 def normalize_for_bard(text: str) -> str:
+    nltk.download('stopwords')
+    
     words = text.split()
     # Фильтрация стоп-слов
     stop_words = set(stopwords.words("russian"))

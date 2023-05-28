@@ -116,4 +116,15 @@ def run_bard_training(artifact_name: str):
 
 
 if __name__ == "__main__":
-    run_bard_training("test_model.pt")
+    import sys
+
+    model_type = sys.argv[1]
+
+    train_func = {
+      'bard': run_bard_training,
+      'svm': run_svm_training,
+    }[model_type]
+
+    print(model_type, train_func)
+    # run_bard_training("test_model.pt")
+    train_func("rest_service/service_model.pt")
