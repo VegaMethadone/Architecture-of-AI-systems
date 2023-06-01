@@ -25,7 +25,7 @@
 ![Component diagram](arch.png)
 
 ### Диаграмма активностей
-![Activity diagram](lab1/workFlow.png)
+![Activity diagram](workFlow.png)
 
 ## Stage 3 ##
 
