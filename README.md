@@ -32,7 +32,7 @@
 
 ### Диаграмма активностей процесса работы системы
 
-![image info](./images/workFlow.png)
+![image info](./images/deploy.png)
 
 
 
