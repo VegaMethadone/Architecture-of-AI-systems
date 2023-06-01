@@ -32,11 +32,11 @@
 
 ### Диаграмма активностей процесса работы системы
 
-![image info](./images/deploy.png)
+![image info](./images/workFlow.png)
 
 
 
 ## Deployment diagram
 
 
-![image info](./images/depl.png)
+![image info](./images/deploy.png)
