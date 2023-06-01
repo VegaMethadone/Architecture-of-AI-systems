@@ -3,9 +3,14 @@ from collections import Counter
 from os import environ
 
 import ujson
+import nltk
+from nltk.corpus import stopwords
 
 
-articles_dir_path = Path(environ['ARTICLES_PATH']) / 'tokenized'
+# nltk.download('stopwords')
+
+# articles_dir_path = Path(environ['ARTICLES_PATH']) / 'tokenized'
+articles_dir_path = Path(environ['ARTICLES_PATH'])
 
 
 def get_articles_content():
@@ -53,3 +58,45 @@ def save_tag_collection(tag_collection_path: str, tag_collection: set[str]):
         f.write(result)
 
 
+def get_prefiltered_data():
+    top_10_tags = {
+        'проблема', 'python', 'apple', 'искусственный интеллект',
+        'программирование', 'игры', 'россия', 'информационная безопасность',
+        'машинное обучение', 'санкции',
+    }
+
+    for article_json in get_articles_json():
+        # if set(article_json['tags']) & top_10_tags:
+        for tag in top_10_tags:
+            for article_tag in article_json['tags']:
+                if tag == article_tag:
+                    yield (article_json['content'], get_tag_identificator(tag))
+
+
+def get_tag_identificator(tag: str) -> int:
+    return {
+        'проблема': 0,
+        'python': 1,
+        'apple': 2,
+        'искусственный интеллект': 3,
+        'программирование': 4,
+        'игры': 5,
+        'россия': 6,
+        'информационная безопасность': 7,
+        'машинное обучение': 8,
+        'санкции': 9,
+    }[tag]
+
+
+
+def normalize_for_bard(text: str) -> str:
+    nltk.download('stopwords')
+    
+    words = text.split()
+    # Фильтрация стоп-слов
+    stop_words = set(stopwords.words("russian"))
+    filtered_words = [word for word in words if word.lower() not in stop_words]  
+    # Преобразование отфильтрованных слов обратно в текст
+    filtered_text = ' '.join(filtered_words)  
+    
+    return filtered_text

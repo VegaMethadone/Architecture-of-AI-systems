@@ -5,6 +5,9 @@ from os import environ
 import scrapy
 import ujson
 
+from ml_utils.text_normalizer import normalize_text
+
+
 
 class HabrSpider(scrapy.Spider):
   """Generic class for HabrSpider's"""
@@ -19,10 +22,13 @@ if not articles_dir_path.exists():
 
 
 def save_article(article_id: str, article_name: str, content: str, tags: list[str]):
+    normalized_content = normalize_text(content)
+    
+
     result = ujson.dumps({
         "article_id": article_id,
         "article_name": article_name,
-        "content": content,
+        "content": normalized_content,
         "tags": tags,
       },
       sort_keys=False,
