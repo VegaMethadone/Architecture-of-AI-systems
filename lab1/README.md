@@ -23,7 +23,7 @@
 ## Stage 2 ##
 
 ### Диаграмма компонентов
-![Component diagram](./images/arch.png)
+![Component diagram](arch.png)
 
 ### Диаграмма активностей
 ![Activity diagram](image2.png)
