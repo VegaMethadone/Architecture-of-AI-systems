@@ -4,7 +4,7 @@
 
 # Репозиторий 
 
->[Рубрикатор](https://github.com/arskell/wine-predictor)
+>[Рубрикатор](https://github.com/VegaMethadone/Architecture-of-AI-systems)
 
 # Задачи:
 >1. Разработка архитектуры системы.
