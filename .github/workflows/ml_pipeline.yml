@@ -86,6 +86,7 @@ jobs:
       model_existense_out: ${{ steps.script.outputs.bool }}
     steps:
       - name: Cache train data
+        id: checkout_step
         uses: actions/cache@v3
         with:
           key: train-data-cache
@@ -94,13 +95,13 @@ jobs:
             ${{ env.MODELS_DIR_PATH }}
 
       - name: Check model exists
-       id: script
-       run: |
-        if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
-          echo "::set-output name=bool::true"
-        else 
-          echo "::set-output name=bool::false"
-        fi
+        id: script
+        run: |
+          if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
+            echo "::set-output name=bool::true"
+          else 
+            echo "::set-output name=bool::false"
+          fi
 
 
   run-uptrain-model:
