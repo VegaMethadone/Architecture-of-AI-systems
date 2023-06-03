@@ -28,9 +28,9 @@ jobs:
           key: train-data-cache
           path: ${{ env.ARTICLES_PATH }}
 
-      # - name: Parse habre articles
-      #   if: ${{ true }} # TODO: add github variable
-      #   run: python -m scrapy_spiders.habrparser
+      - name: Parse habre articles
+        if: ${{ true }} # TODO: add github variable
+        run: python -m scrapy_spiders.habrparser
 
       - name: Upload articles
         uses: actions/upload-artifact@v3
