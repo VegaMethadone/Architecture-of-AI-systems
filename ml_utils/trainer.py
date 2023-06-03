@@ -60,7 +60,7 @@ def run_linear_model_training(artifact_name: str):
     texts = []
     labels = []
 
-    for text, tag_id in tqdm(get_part_of_data(20, 100, get_prefiltered_data())):
+    for text, tag_id in tqdm(get_part_of_data(0, 100, get_prefiltered_data())):
     # for text, tag_id in tqdm(get_prefiltered_data()):
         text = normalize_for_bard(text)
 
@@ -85,6 +85,9 @@ def run_linear_model_training(artifact_name: str):
     with open(f'{artifact_name}', 'wb') as file:
         pickle.dump(model, file)
     # model.save(artifact_name)
+    with open('vectorizer', 'wb') as file:
+        pickle.dump(vectorizer, file)
+        
     logging.info(f'Model saved: {artifact_name}')
 
 

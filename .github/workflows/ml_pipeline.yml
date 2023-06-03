@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: normalize-parsed-artilces
     outputs:
-      model_existense_out: ${{ steps.script.outputs.bool }}
+      model_existense_out: ${{ steps.script.outputs.model_exists }}
     steps:
       - name: Cache train data
         id: checkout_step
@@ -135,10 +135,13 @@ jobs:
     name: Training
     runs-on: ubuntu-latest
     needs: check-model-job
-    if: ${{needs.check-model-job.script.outputs.model_exists}} == "false"
+    if: ${{needs.check-model-job.script.outputs.model_existense_out}} == "false"
     steps:
       - name: print debug
-        run: echo "${{needs.check-model-job.script.outputs.model_exists}}"
+        run: |
+          echo "${{needs.check-model-job.script.outputs.model_exists}}"
+          echo "${{needs.check-model-job.script.outputs.model_existense_out}}"
+          
       - name: Check out repository code
         uses: actions/checkout@v3
 
@@ -206,7 +209,7 @@ jobs:
           retention-days: 14
 
   push-image-to-docker-hub:
-    name: Deployment
+    name: Build image
     runs-on: ubuntu-latest
     needs: run-evaluate-models
     steps:
@@ -235,3 +238,14 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/architecture_of_ai_systems_lab:latest
+
+  send-deploy-hook:
+      name: Deploy Hook
+      runs-on: ubuntu-latest
+      needs: push-image-to-docker-hub
+      steps:
+        - name: Send post request
+          run: curl -X POST http://176.124.211.84:5000/deploy_hook
+
+
+
