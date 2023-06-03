@@ -6,13 +6,13 @@ import pickle
 import itertools
 import os
 import json
-import torch
+# import torch
 from os import environ
 from pathlib import Path
 from tqdm import tqdm
-from transformers import BartTokenizer
-from transformers import BartForSequenceClassification
-from torch.utils.data import DataLoader, TensorDataset
+# from transformers import BartTokenizer
+# from transformers import BartForSequenceClassification
+# from torch.utils.data import DataLoader, TensorDataset
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
