@@ -26,7 +26,7 @@ jobs:
         uses: actions/cache@v3
         with:
           key: train-data-cache
-          path: ${{ ARTICLES_PATH }}
+          path: ${{ env.ARTICLES_PATH }}
 
       # - name: Parse habre articles
       #   if: ${{ true }} # TODO: add github variable
@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: articles
-          path: ${{ ARTICLES_PATH }}
+          path: ${{ env.ARTICLES_PATH }}
           retention-days: 14
 
   run-train-model:
