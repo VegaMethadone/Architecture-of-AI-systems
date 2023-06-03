@@ -32,9 +32,9 @@ jobs:
             ${{ env.ARTICLES_PATH }}
             ${{ env.MODELS_DIR_PATH }}
 
-      - name: Parse habre articles
-        if: ${{ true }} # TODO: add github variable
-        run: python -m scrapy_spiders.habrparser
+      # - name: Parse habre articles
+      #   if: ${{ true }} # TODO: add github variable
+      #   run: python -m scrapy_spiders.habrparser
 
   normalize-parsed-artilces:
     name: Normalizing
@@ -137,6 +137,8 @@ jobs:
     needs: check-model-job
     if: ${{needs.check-model-job.outputs.model_exists}} == "false"
     steps:
+      - name: print debug
+        run: echo "${{needs.check-model-job.outputs.model_exists}}"
       - name: Check out repository code
         uses: actions/checkout@v3
 
