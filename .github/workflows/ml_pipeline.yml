@@ -30,9 +30,9 @@ jobs:
           key: train-data-cache
           path: "./train_data"
 
-      # - name: Parse habre articles
-      #   if: ${{ true }} # TODO: add github variable
-      #   run: python -m scrapy_spiders.habrparser
+      - name: Parse habre articles
+        if: ${{ true }} # TODO: add github variable
+        run: python -m scrapy_spiders.habrparser
 
   normalize-parsed-artilces:
     name: Normalizing
@@ -101,7 +101,7 @@ jobs:
     name: Uptraining
     runs-on: ubuntu-latest
     needs: check-model-job
-    if: ${{needs.check-model-job.script.outputs.model_exists}} == true
+    if: ${{needs.check-model-job.script.outputs.model_existense_out}} == "true"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -121,13 +121,8 @@ jobs:
       - name: Install PIP requirements
         run: pip install -r requirements.txt
 
-      # - name: Download articles
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: articles
-
-      # - name: Train model
-      #   run: python -m ml_utils.trainer add_train_linear
+      - name: Uptrain model
+        run: python -m ml_utils.trainer add_train_linear
 
   run-train-model:
     name: Training
@@ -135,18 +130,6 @@ jobs:
     needs: check-model-job
     if: ${{needs.check-model-job.script.outputs.model_existense_out}} == "false"
     steps:
-      - name: print debug
-        run: |
-            echo "${{needs.check-model-job.script.outputs.model_exists}}"
-            echo "${{needs.check-model-job.script.outputs.model_existense_out}}"
-            echo "${{needs.check-model-job.steps.script.outputs.model_existense_out}}"
-            echo "${{needs.check-model-job.steps.script.outputs.model_exists}}"
-
-            echo ${{needs.check-model-job.script.outputs.model_exists}}
-            echo ${{needs.check-model-job.script.outputs.model_existense_out}}
-            echo ${{needs.check-model-job.steps.script.outputs.model_existense_out}}
-            echo ${{needs.check-model-job.steps.script.outputs.model_exists}}
-
       - name: Check out repository code
         uses: actions/checkout@v3
 
@@ -170,8 +153,8 @@ jobs:
       #   with:
       #     name: articles
 
-      # - name: Train model
-      #   run: python -m ml_utils.trainer linear
+      - name: Train model
+        run: python -m ml_utils.trainer linear
 
   run-evaluate-models:
     name: Evaluate optimal model
@@ -205,9 +188,7 @@ jobs:
               cp "${{ env.MODELS_DIR_PATH }}/service_model.pt" ".rest_service/service_model.pt"
             else 
               echo "Model not found in ${{ env.MODELS_DIR_PATH }}"
-            fi
-
-        
+            fi        
 
       - name: Upload model
         uses: actions/upload-artifact@v3
@@ -217,7 +198,7 @@ jobs:
           retention-days: 14
 
   push-image-to-docker-hub:
-    name: Build image
+    name: Build image & Push
     runs-on: ubuntu-latest
     needs: run-evaluate-models
     steps:
@@ -229,7 +210,11 @@ jobs:
         with:
           key: train-data-cache
           path: ./rest_service/service_model.pt
-          # path: ./train_data
+
+      - name: Download articles
+        uses: actions/download-artifact@v3
+        with:
+          name: model
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
