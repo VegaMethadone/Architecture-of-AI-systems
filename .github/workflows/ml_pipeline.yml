@@ -108,7 +108,7 @@ jobs:
     name: Uptraining
     runs-on: ubuntu-latest
     needs: check-model-job
-    if: ${{ ${{needs.check-model-job.outputs.model_existense_out}} == true }}
+    if: ${{needs.check-model-job.outputs.model_existense_out}} == true
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -142,7 +142,7 @@ jobs:
     name: Training
     runs-on: ubuntu-latest
     needs: check-model-job
-    if: ${{ ${{needs.check-model-job.outputs.model_existense_out}} == false }}
+    if: ${{needs.check-model-job.outputs.model_existense_out}} == false
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -213,7 +213,7 @@ jobs:
   push-image-to-docker-hub:
     name: Deployment
     runs-on: ubuntu-latest
-    needs: run-train-model
+    needs: run-evaluate-models
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
