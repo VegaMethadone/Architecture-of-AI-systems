@@ -95,7 +95,7 @@ jobs:
   run-train-model:
     name: Training
     runs-on: ubuntu-latest
-    needs: check-model-job
+    needs: normalize-parsed-artilces
     # if: ${{needs.check-model-job.script.outputs.model_existense_out}} == "false"
     steps:
       - name: Check out repository code
