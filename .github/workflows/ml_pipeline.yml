@@ -4,7 +4,8 @@ on: [push]
 
 env:
   ARTICLES_PATH: "./train_data/parsed_articles"
-  RAW_ARTICLES_PATH: "./train_data/raw_parsed_articles"
+  RAW_ARTICLES_PATH: "./train_data/parsed_articles"
+  # RAW_ARTICLES_PATH: "./train_data/raw_parsed_articles"
 
 jobs:
   parse-articles-job:
@@ -31,9 +32,9 @@ jobs:
             ${{ env.ARTICLES_PATH }}
             ./rest_service/service_model.pt
 
-      - name: Parse habre articles
-        if: ${{ true }} # TODO: add github variable
-        run: python -m scrapy_spiders.habrparser
+      # - name: Parse habre articles
+      #   if: ${{ true }} # TODO: add github variable
+      #   run: python -m scrapy_spiders.habrparser
 
   normalize-parsed-artilces:
     name: Normalizing
