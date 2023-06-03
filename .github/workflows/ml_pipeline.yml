@@ -73,8 +73,8 @@ jobs:
     name: Check model
     runs-on: ubuntu-latest
     needs: normalize-parsed-artilces
-    outputs:
-      model_existense_out: ${{ steps.script.outputs.model_exists }}
+    # outputs:
+    #   model_existense_out: ${{ steps.script.outputs.model_exists }}
     steps:
       - name: Cache train data
         id: checkout_step
@@ -87,13 +87,9 @@ jobs:
         id: script
         run: |
             if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
-              echo "model_exists=true" >> $GITHUB_OUTPUT
-              echo "LECHO"
-              echo "true" > ./train_data/model_exists
+              echo "MODEL_EXISTS=true" >> $GITHUB_ENV
             else 
-              echo "model_exists=false" >> $GITHUB_OUTPUT
-              echo "NECHO"
-              echo "false" > ./train_data/model_exists
+              echo "MODEL_EXISTS=false" >> $GITHUB_ENV
             fi
 
 
@@ -101,7 +97,7 @@ jobs:
     name: Uptraining
     runs-on: ubuntu-latest
     needs: check-model-job
-    if: ${{needs.check-model-job.outputs.model_existense_out}} == "true"
+    if: ${{ env.MODEL_EXISTS }} == "true"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -128,7 +124,7 @@ jobs:
     name: Training
     runs-on: ubuntu-latest
     needs: check-model-job
-    if: ${{needs.check-model-job.outputs.model_existense_out}} == "false"
+    if: ${{ env.MODEL_EXISTS }} == "false"
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
