@@ -86,11 +86,15 @@ jobs:
       - name: Check model exists
         id: script
         run: |
-          if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
-            echo "model_exists=true" >> $GITHUB_OUTPUT
-          else 
-            echo "model_exists=false" >> $GITHUB_OUTPUT
-          fi
+            if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
+              echo "model_exists=true" >> $GITHUB_OUTPUT
+              echo "LECHO"
+              echo "true" > ./train_data/model_exists
+            else 
+              echo "model_exists=false" >> $GITHUB_OUTPUT
+              echo "NECHO"
+              echo "false" > ./train_data/model_exists
+            fi
 
 
   run-uptrain-model:
@@ -133,9 +137,14 @@ jobs:
     steps:
       - name: print debug
         run: |
-          echo "${{needs.check-model-job.script.outputs.model_exists}}"
-          echo "${{needs.check-model-job.script.outputs.model_existense_out}}"
-          echo "${{needs.check-model-job.steps.script.outputs.model_existense_out}}"
+            echo "${{needs.check-model-job.script.outputs.model_exists}}"
+            echo "${{needs.check-model-job.script.outputs.model_existense_out}}"
+            echo "${{needs.check-model-job.steps.script.outputs.model_existense_out}}"
+            echo "${{needs.check-model-job.steps.script.outputs.model_exists}}"
+            echo `cat ./train_data/model_exists`
+            echo (`cat ./train_data/model_exists` == "false")
+            echo (`cat ./train_data/model_exists` == "true")
+            echo (`cat ./train_data/model_exists` == "test")
 
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -190,7 +199,14 @@ jobs:
         run: python -m ml_utils.model_evaluator
 
       - name: Save optimal model
-        run: cp "${{ env.MODELS_DIR_PATH }}/service_model.pt" ".rest_service/service_model.pt"
+        run: |
+            if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
+              cp "${{ env.MODELS_DIR_PATH }}/service_model.pt" ".rest_service/service_model.pt"
+            else 
+              echo "Model not found in ${{ env.MODELS_DIR_PATH }}"
+            fi
+
+        
 
       - name: Upload model
         uses: actions/upload-artifact@v3
