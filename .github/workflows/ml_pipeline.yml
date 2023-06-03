@@ -3,8 +3,8 @@ run-name: Model train workflow
 on: [push]
 
 env:
-  ARTICLES_PATH: "~/train_data/parsed_articles"
-  RAW_ARTICLES_PATH: "~/train_data/raw_parsed_articles"
+  ARTICLES_PATH: "./train_data/parsed_articles"
+  RAW_ARTICLES_PATH: "./train_data/raw_parsed_articles"
 
 jobs:
   parse-articles-job:
@@ -80,7 +80,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-        
+
       - name: Cache train data
         uses: actions/cache@v3
         with:
