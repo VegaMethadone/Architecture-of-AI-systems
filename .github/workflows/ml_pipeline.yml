@@ -30,9 +30,9 @@ jobs:
           key: train-data-cache
           path: "./train_data"
 
-      - name: Parse habre articles
-        if: ${{ true }} # TODO: add github variable
-        run: python -m scrapy_spiders.habrparser
+      # - name: Parse habre articles
+      #   if: ${{ true }} # TODO: add github variable
+      #   run: python -m scrapy_spiders.habrparser
 
   normalize-parsed-artilces:
     name: Normalizing
@@ -87,9 +87,9 @@ jobs:
         id: script
         run: |
           if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
-            echo "model_exists=true" >> "$GITHUB_OUTPUT"
+            echo "model_exists=true" >> $GITHUB_OUTPUT
           else 
-            echo "model_exists=false" >> "$GITHUB_OUTPUT"
+            echo "model_exists=false" >> $GITHUB_OUTPUT
           fi
 
 
