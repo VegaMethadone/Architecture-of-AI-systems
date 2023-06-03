@@ -136,8 +136,6 @@ jobs:
           echo "${{needs.check-model-job.script.outputs.model_exists}}"
           echo "${{needs.check-model-job.script.outputs.model_existense_out}}"
           echo "${{needs.check-model-job.steps.script.outputs.model_existense_out}}"
-          echo "${{check-model-job.script.outputs.model_existense_out}}"
-          echo "${{check-model-job.steps.script.outputs.model_existense_out}}"
 
       - name: Check out repository code
         uses: actions/checkout@v3
