@@ -85,10 +85,18 @@ jobs:
     outputs:
       model_existense_out: ${{ steps.script.outputs.bool }}
     steps:
-     - name: Check model exists
+      - name: Cache train data
+        uses: actions/cache@v3
+        with:
+          key: train-data-cache
+          path: |
+            ${{ env.ARTICLES_PATH }}
+            ${{ env.MODELS_DIR_PATH }}
+
+      - name: Check model exists
        id: script
        run: |
-        if [ -e "$file" ]; then
+        if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
           echo "::set-output name=bool::true"
         else 
           echo "::set-output name=bool::false"
@@ -99,8 +107,7 @@ jobs:
     name: Uptraining
     runs-on: ubuntu-latest
     needs: check-model-job
-    if ${{ ${{needs.check-model-job.outputs.model_existense_out}} == true }}
-    needs: normalize-parsed-artilces
+    if: ${{ ${{needs.check-model-job.outputs.model_existense_out}} == true }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -134,7 +141,7 @@ jobs:
     name: Training
     runs-on: ubuntu-latest
     needs: check-model-job
-    if ${{ ${{needs.check-model-job.outputs.model_existense_out}} == false }}
+    if: ${{ ${{needs.check-model-job.outputs.model_existense_out}} == false }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
