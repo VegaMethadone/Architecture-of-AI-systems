@@ -5,6 +5,7 @@ on: [push]
 env:
   ARTICLES_PATH: "./train_data/parsed_articles"
   RAW_ARTICLES_PATH: "./train_data/parsed_articles"
+  MODELS_DIR_PATH: "./train_data/models"
   # RAW_ARTICLES_PATH: "./train_data/raw_parsed_articles"
 
 jobs:
@@ -18,7 +19,7 @@ jobs:
       - name: Setup python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10' 
+          python-version: '3.10'
           cache: pip
 
       - name: Install PIP requirements
@@ -30,7 +31,7 @@ jobs:
           key: train-data-cache
           path: |
             ${{ env.ARTICLES_PATH }}
-            ./rest_service/service_model.pt
+            ${{ env.MODELS_DIR_PATH }}
 
       # - name: Parse habre articles
       #   if: ${{ true }} # TODO: add github variable
@@ -64,7 +65,7 @@ jobs:
           key: train-data-cache
           path: |
             ${{ env.ARTICLES_PATH }}
-            ./rest_service/service_model.pt
+            ${{ env.MODELS_DIR_PATH }}
 
       - name: Normalize habre articles
         if: ${{ true }} # TODO: add github variable
@@ -77,9 +78,28 @@ jobs:
           path: ${{ env.ARTICLES_PATH }}
           retention-days: 14
 
-  run-train-model:
-    name: Training
+  check-model-job:
+    name: Check model
     runs-on: ubuntu-latest
+    needs: normalize-parsed-artilces
+    outputs:
+      model_existense_out: ${{ steps.script.outputs.bool }}
+    steps:
+     - name: Check model exists
+       id: script
+       run: |
+        if [ -e "$file" ]; then
+          echo "::set-output name=bool::true"
+        else 
+          echo "::set-output name=bool::false"
+        fi
+
+
+  run-uptrain-model:
+    name: Uptraining
+    runs-on: ubuntu-latest
+    needs: check-model-job
+    if ${{ ${{needs.check-model-job.outputs.model_existense_out}} == true }}
     needs: normalize-parsed-artilces
     steps:
       - name: Check out repository code
@@ -90,6 +110,7 @@ jobs:
         with:
           python-version: '3.10' 
           cache: pip
+          
       - name: Install PIP requirements
         run: pip install -r requirements.txt
 
@@ -98,12 +119,39 @@ jobs:
         with:
           name: articles
 
-      - name: Upload model
-        uses: actions/upload-artifact@v3
+      - name: Cache train data
+        uses: actions/cache@v3
         with:
-          name: model
-          path: ./rest_service/service_model.pt
-          retention-days: 14
+          key: train-data-cache
+          path: |
+            ${{ env.ARTICLES_PATH }}
+            ${{ env.MODELS_DIR_PATH }}
+
+      # - name: Train model
+      #   run: python -m ml_utils.trainer add_train_linear
+
+  run-train-model:
+    name: Training
+    runs-on: ubuntu-latest
+    needs: check-model-job
+    if ${{ ${{needs.check-model-job.outputs.model_existense_out}} == false }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Setup python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+          cache: pip
+
+      - name: Install PIP requirements
+        run: pip install -r requirements.txt
+
+      - name: Download articles
+        uses: actions/download-artifact@v3
+        with:
+          name: articles
 
       - name: Cache train data
         uses: actions/cache@v3
@@ -111,11 +159,49 @@ jobs:
           key: train-data-cache
           path: |
             ${{ env.ARTICLES_PATH }}
-            ./rest_service/service_model.pt
+            ${{ env.MODELS_DIR_PATH }}
 
-      # TODO 
       # - name: Train model
-      #   run: python -m ml_utils.trainer bard
+      #   run: python -m ml_utils.trainer linear
+
+  run-evaluate-models:
+    name: Evaluate optimal model
+    runs-on: ubuntu-latest
+    needs: [run-train-model, run-uptrain-model]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Setup python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+          cache: pip
+
+      - name: Install PIP requirements
+        run: pip install -r requirements.txt
+
+      - name: Cache train data
+        uses: actions/cache@v3
+        with:
+          key: train-data-cache
+          path: |
+            ${{ env.ARTICLES_PATH }}
+            ${{ env.MODELS_DIR_PATH }}
+
+      - name: Run evaluate model script
+        run: python -m ml_utils.model_evaluator
+
+      - name: Save optimal model
+        run: cp "${{ env.MODELS_DIR_PATH }}/service_model.pt" ".rest_service/service_model.pt"
+
+      - name: Upload model
+        uses: actions/upload-artifact@v3
+        with:
+          name: model
+          path: ./rest_service/service_model.pt
+          retention-days: 14
+
   push-image-to-docker-hub:
     name: Deployment
     runs-on: ubuntu-latest
