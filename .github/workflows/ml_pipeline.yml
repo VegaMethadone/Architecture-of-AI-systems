@@ -41,6 +41,7 @@ jobs:
 
   run-train-model:
     runs-on: ubuntu-latest
+    needs: parse-articles-job
     steps:
       - name: Setup python 3.10
         uses: actions/setup-python@v4
@@ -72,6 +73,7 @@ jobs:
       #   run: python -m ml_utils.trainer bard
   push-image-to-docker-hub:
     runs-on: ubuntu-latest
+    needs: run-train-model
     steps:
       - name: Cache train data
         uses: actions/cache@v3
