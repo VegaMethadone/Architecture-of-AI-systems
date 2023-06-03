@@ -70,11 +70,11 @@ jobs:
         run: python -m ml_utils.text_normalizer
 
       - name: Upload articles
-          uses: actions/upload-artifact@v3
-          with:
-            name: articles
-            path: ${{ env.ARTICLES_PATH }}
-            retention-days: 14
+        uses: actions/upload-artifact@v3
+        with:
+          name: articles
+          path: ${{ env.ARTICLES_PATH }}
+          retention-days: 14
 
   run-train-model:
     name: Training
