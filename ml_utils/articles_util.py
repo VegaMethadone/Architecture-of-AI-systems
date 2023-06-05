@@ -13,6 +13,14 @@ from nltk.corpus import stopwords
 articles_dir_path = Path(environ['ARTICLES_PATH'])
 
 
+def count_articles() -> int:
+    i = 0
+    for file in articles_dir_path.iterdir():
+        if file.is_file():
+            i += 1
+    return i
+            
+
 def get_articles_content():
     for file in articles_dir_path.iterdir():
         if file.is_file():
@@ -58,6 +66,13 @@ def save_tag_collection(tag_collection_path: str, tag_collection: set[str]):
         f.write(result)
 
 
+def count_prefiltered_data() -> int:
+    i = 0
+    for file in get_prefiltered_data():
+        i += 1
+    return i
+
+
 def get_prefiltered_data():
     top_10_tags = {
         'проблема', 'python', 'apple', 'искусственный интеллект',
@@ -88,10 +103,8 @@ def get_tag_identificator(tag: str) -> int:
     }[tag]
 
 
-
+nltk.download('stopwords')
 def normalize_for_bard(text: str) -> str:
-    nltk.download('stopwords')
-    
     words = text.split()
     # Фильтрация стоп-слов
     stop_words = set(stopwords.words("russian"))

@@ -3,15 +3,109 @@ run-name: Model train workflow
 on: [push]
 
 env:
-  ARTICLES_PATH: "~/train_data/parsed_articles"
-  RAW_ARTICLES_PATH: "~/train_data/raw_parsed_articles"
+  ARTICLES_PATH: "./train_data/parsed_articles"
+  RAW_ARTICLES_PATH: "./train_data/parsed_articles"
+  MODELS_DIR_PATH: "./train_data/models"
 
 jobs:
-  first-job:
+  parse-articles-job:
+    name: Parsing
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+
+      - name: Setup python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: pip
+
+      - name: Install PIP requirements
+        run: pip install -r requirements.txt
+
+      - name: Cache train data
+        uses: actions/cache@v3
+        with:
+          key: train-data-cache
+          path: "./train_data"
+
+      - name: Parse habre articles
+        if: ${{ true }} # TODO: add github variable
+        run: python -m scrapy_spiders.habrparser
+
+  normalize-parsed-artilces:
+    name: Normalizing
+    runs-on: ubuntu-latest
+    needs: parse-articles-job
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Setup python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+          cache: pip
+      - name: Install PIP requirements
+        run: pip install -r requirements.txt
+
+      - name: Cache train data
+        uses: actions/cache@v3
+        with:
+          key: train-data-cache
+          path: "./train_data"
+            # ${{ env.ARTICLES_PATH }}
+            # ${{ env.MODELS_DIR_PATH }}
+
+      - name: Normalize habre articles
+        if: ${{ true }} # TODO: add github variable
+        run: python -m ml_utils.text_normalizer
+
+      - name: Upload articles
+        uses: actions/upload-artifact@v3
+        with:
+          name: articles
+          path: ${{ env.ARTICLES_PATH }}
+          retention-days: 14
+
+  # check-model-job:
+  #   name: Check model
+  #   runs-on: ubuntu-latest
+  #   needs: normalize-parsed-artilces
+  #   outputs:
+  #     model_exists: ${{ steps.script.outputs.model_exists }}
+  #   steps:
+  #     - name: Cache train data
+  #       id: checkout_step
+  #       uses: actions/cache@v3
+  #       with:
+  #         key: train-data-cache
+  #         path: "./train_data"
+
+  #     - name: Check model exists
+  #       id: script
+  #       run: |
+  #           if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
+  #             echo "model_exists=true" >> $GITHUB_OUTPUT
+  #           else 
+  #             echo "model_exists=false" >> $GITHUB_OUTPUT
+  #           fi
+
+  run-train-model:
+    name: Training
+    runs-on: ubuntu-latest
+    needs: normalize-parsed-artilces
+    # if: ${{needs.check-model-job.script.outputs.model_existense_out}} == "false"
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Cache train data
+        uses: actions/cache@v3
+        with:
+          key: train-data-cache
+          path: "./train_data"
 
       - name: Setup python 3.10
         uses: actions/setup-python@v4
@@ -22,28 +116,106 @@ jobs:
       - name: Install PIP requirements
         run: pip install -r requirements.txt
 
+      - name: Train model
+        run: |
+            if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
+              echo "Model already exists, skip Train step"
+            else 
+              python -m ml_utils.trainer linear
+            fi
+
+  run-uptrain-model:
+    name: Uptraining
+    runs-on: ubuntu-latest
+    needs: [run-train-model]
+    # if: ${{needs.check-model-job.script.outputs.model_existense_out}} == "true"
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
       - name: Cache train data
         uses: actions/cache@v3
         with:
           key: train-data-cache
-          path: |
-            ~/train_data
-            ./rest_service/service_model.pt
+          path: "./train_data"
 
-      - name: Parse habre articles
-        if: ${{ true }} # TODO: add github variable
-        run: python -m scrapy_spiders.habrparser
+      - name: Setup python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+          cache: pip
+          
+      - name: Install PIP requirements
+        run: pip install -r requirements.txt
 
-      # - name: Upload model
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: model
-      #     path: path
-      #     retention-days: 1
+      - name: Uptrain model
+        run: |
+            if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
+              python -m ml_utils.trainer add_train_linear
+            else 
+              echo "Model doesnt exists yet, skip Uptrain step"
+            fi
 
-      # TODO 
-      # - name: Train model
-      #   run: python -m ml_utils.trainer bard
+
+  run-evaluate-models:
+    name: Evaluate optimal model
+    runs-on: ubuntu-latest
+    needs: [run-train-model, run-uptrain-model]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Cache train data
+        uses: actions/cache@v3
+        with:
+          key: train-data-cache
+          path: "./train_data"
+
+      - name: Setup python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+          cache: pip
+
+      - name: Install PIP requirements
+        run: pip install -r requirements.txt
+
+      - name: Run evaluate model script
+        run: python -m ml_utils.model_evaluator
+
+      - name: Save optimal model
+        run: |
+            if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
+              cp "${{ env.MODELS_DIR_PATH }}/service_model.pt" ".rest_service/service_model.pt"
+            else 
+              echo "Model not found in ${{ env.MODELS_DIR_PATH }}"
+            fi        
+
+      - name: Upload model
+        uses: actions/upload-artifact@v3
+        with:
+          name: model
+          path: ./rest_service/service_model.pt
+          retention-days: 14
+
+  push-image-to-docker-hub:
+    name: Build image & Push
+    runs-on: ubuntu-latest
+    needs: run-evaluate-models
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Cache train data
+        uses: actions/cache@v3
+        with:
+          key: train-data-cache
+          path: ./rest_service/service_model.pt
+
+      - name: Download articles
+        uses: actions/download-artifact@v3
+        with:
+          name: model
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -61,3 +233,11 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/architecture_of_ai_systems_lab:latest
+
+  send-deploy-hook:
+    name: Deploy Hook
+    runs-on: ubuntu-latest
+    needs: push-image-to-docker-hub
+    steps:
+      - name: Send post request
+        run: curl -X POST http://176.124.211.84:5000/deploy_hook
