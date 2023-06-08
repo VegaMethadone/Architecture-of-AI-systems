@@ -22,12 +22,12 @@ if __name__ == '__main__':
   linear_measured = measure_linear_model()
   bard_measured = measure_bard_model()
 
-  # verdict = 'linear' if linear_measured < bard_measured else 'bard'
-  if linear_measured < bard_measured:
-    save_current_metric(linear_measured)
-    verdict = 'linear'
-  else:
-    save_current_metric(bard_measured)
-    verdict = 'bard'
+  previous_best_metric = read_previous_version_metrics()
+
+  verdict - {
+    previous_best_metric: 'prev_model',
+    linear_measured: 'new_linear',
+    bard_measured: 'new_bard',
+  }[min()]
 
   print(verdict)
