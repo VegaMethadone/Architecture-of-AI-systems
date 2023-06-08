@@ -117,12 +117,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Train model
-        run: |
-            if [ -e "${{ env.MODELS_DIR_PATH }}/service_model.pt" ]; then
-              echo "Model already exists, skip Train step"
-            else 
-              python -m ml_utils.trainer bard
-            fi
+        run: python -m ml_utils.trainer bard
 
   run-train-model:
     name: Training
