@@ -1,5 +1,6 @@
 from ml_utils.trainer import measure_linear_model, measure_bard_model
 from pathlib import Path
+from os import environ
 
 models_dir_path = Path(environ['MODELS_DIR_PATH'])
 if not models_dir_path.exists():
