@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
   previous_best_metric = read_previous_version_metrics()
 
-  verdict - {
+  verdict = {
     previous_best_metric: 'prev_model',
     linear_measured: 'new_linear',
     bard_measured: 'new_bard',
