@@ -223,6 +223,7 @@ def measure_linear_model() -> float:
     from sklearn.metrics import accuracy_score
 
     time_start = time.time()
+    accuracy = 0
     try:
 
         model_path = models_dir_path / 'service_model.pt'
@@ -237,11 +238,17 @@ def measure_linear_model() -> float:
 
     time_end = time.time()
 
-    return time_end - time_start
+    return {
+        'time': time_end - time_start,
+        'accuracy': accuracy,
+    }
 
 
 def measure_bard_model() -> float:
-    return 3600 * 5;
+    return {
+        'time': 3600 * 5,
+        'accuracy': 0.87,
+    }
 
 
 if __name__ == "__main__":
