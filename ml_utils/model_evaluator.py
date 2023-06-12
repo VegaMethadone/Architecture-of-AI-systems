@@ -24,7 +24,7 @@ def save_current_metric(metric: float):
     f.write(metric)
 
 def evaluate_weighted_avg(metric: dict) -> float:
-  metric['time'] / 60 * 0.05 + (1 - metric['accuracy']) * 0.95
+  return metric['time'] / 60 * 0.05 + (1 - metric['accuracy']) * 0.95
 
 if __name__ == '__main__':
   linear_measured = evaluate_weighted_avg(measure_linear_model())
@@ -36,6 +36,6 @@ if __name__ == '__main__':
     previous_best_metric: 'prev_model',
     linear_measured: 'new_linear',
     bard_measured: 'new_bard',
-  }[min()]
+  }[min([linear_measured, bard_measured, previous_best_metric])]
 
   print(verdict)
