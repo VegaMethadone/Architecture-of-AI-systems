@@ -237,11 +237,17 @@ def measure_linear_model() -> float:
 
     time_end = time.time()
 
-    return time_end - time_start
+    return {
+        'time': time_end - time_start,
+        'accuracy': accuracy,
+    }
 
 
 def measure_bard_model() -> float:
-    return 3600 * 5;
+    return {
+        'time': 3600 * 5,
+        'accuracy': 0.87,
+    }
 
 
 if __name__ == "__main__":

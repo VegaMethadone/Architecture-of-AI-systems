@@ -18,9 +18,12 @@ def save_current_metric(metric: float):
   with open(metric_file, 'w') as f:
     f.write(metric)
 
+def evaluate_weighted_avg(metric: dict) -> float:
+  metric['time'] / 60 * 0.05 + (1 - metric['accuracy']) * 0.95
+
 if __name__ == '__main__':
-  linear_measured = measure_linear_model()
-  bard_measured = measure_bard_model()
+  linear_measured = evaluate_weighted_avg(measure_linear_model())
+  bard_measured = evaluate_weighted_avg(measure_bard_model())
 
   previous_best_metric = read_previous_version_metrics()
 
