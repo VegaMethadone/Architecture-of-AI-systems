@@ -223,6 +223,7 @@ def measure_linear_model() -> float:
     from sklearn.metrics import accuracy_score
 
     time_start = time.time()
+    accuracy = 0
     try:
 
         model_path = models_dir_path / 'service_model.pt'
